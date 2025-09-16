@@ -1,0 +1,27 @@
+body{
+    background-color: rgb(77, 77, 77);
+
+    display:  flex;
+    justify-content:center;
+    align-items: center;
+}
+
+div{   
+    margin-top: 120px;
+    color: azure; 
+    background-color:rgb(64, 68, 68) ;
+    display:  flex;
+    justify-content:center;
+}
+
+h1{
+    font-family: sans-serif;
+}
+
+input{
+    margin: 10px;
+}
+form{
+    height: 300px;
+    width: 200px;
+}
