@@ -8,18 +8,89 @@ $result = mysqli_query($conexao, "SELECT * FROM recados");
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stistylsheet" href="css.css">
+    <title>Mural de Pedidos</title>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="scripts/jquery.js"></script>
+<script src="scripts/jquery.validate.js"></script>
+<script>
+$(document).ready(function() {
+    $("#mural").validate({
+        rules: {
+            nome: { required: true, minlength: 4 },
+            email: { required: true, email: true },
+            msg: { required: true, minlength: 10 }
+        },
+        messages: {
+            nome: { required: "Digite o seu nome", minlength: "O nome deve ter no mínimo 4 caracteres" },
+            email: { required: "Digite o seu e-mail", email: "Digite um e-mail válido" },
+            msg: { required: "Digite sua mensagem", minlength: "A mensagem deve ter no mínimo 10 caracteres" }
+        }
+    });
+});
+</script>
 </head>
 <body>
-    <form action="">
-    <div style="width: 300px; height: 250px; border: 2px solid rgb(77, 77, 77); padding: 10px; border-radius: 8px; ">
-    <form action="">
- <h1>recados</h1>
-      <input type="text" placeholder="nome" id="nome">
-      <input type="password" placeholder="email" id="email">
-      <input type="submit" onclick="logar(); return false">
-    </form>
-  </div>
+<div id="main">
+<div id="geral">
+<div id="header">
+    <h1>Mural de pedidos</h1>
+</div>
+
+<div id="formulario_mural">
+<form id="mural" method="post">
+    <label>Nome:</label>
+    <input type="text" name="nome"/><br/>
+    <label>Email:</label>
+    <input type="text" name="email"/><br/>
+    <label>Mensagem:</label>
+    <textarea name="msg"></textarea><br/>
+    <input type="submit" value="Publicar no Mural" name="cadastra" class="btn"/>
+</form>
+</div>
+
+<?php
+
+$host    = "localhost";   
+$usuario = "root";       
+$senha   = "";            
+$banco   = "recados";       
+$conexao = mysqli_connect($host, $usuario, $senha, $banco);
+
+if (!$conexao) {
+    die("Erro ao conectar: " . mysqli_connect_error());
+}
+
+mysqli_set_charset($conexao, "utf8");
+
+if (!$conexao) {
+  die("Erro ao conectar: " . mysqli_connect_error());
+}
+
+if(isset($_POST['cadastra'])){
+  $nome  = mysqli_real_escape_string($conexao, $_POST['nome']);
+  $email = mysqli_real_escape_string($conexao, $_POST['email']);
+  $msg   = mysqli_real_escape_string($conexao, $_POST['msg']);
+
+  $sql = "INSERT INTO recados (nome, email, mensagem) VALUES ('$nome', '$email', '$msg')";
+  mysqli_query($conexao, $sql) or die("Erro ao inserir dados: " . mysqli_error($conexao));
+  header("Location: mural.php");
+  exit;  
+}
+
+$seleciona = mysqli_query($conexao, "SELECT * FROM recados ORDER BY id DESC");
+while($res = mysqli_fetch_assoc($seleciona)){
+    echo '<ul class="recados">';
+    echo '<li><strong>ID:</strong> ' . $res['id'] . '</li>';
+    echo '<li><strong>Nome:</strong> ' . htmlspecialchars($res['nome']) . '</li>';
+    echo '<li><strong>Email:</strong> ' . htmlspecialchars($res['email']) . '</li>';
+    echo '<li><strong>Mensagem:</strong> ' . nl2br(htmlspecialchars($res['mensagem'])) . '</li>';
+    echo '</ul>';
+}
+
+?>
+<div id="footer">
+</div>
+</div>
+</div>
 </body>
 </html>
